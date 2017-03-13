@@ -11,7 +11,7 @@ export class HeaderComponent implements OnInit {
   constructor(private recipeService: RecipeService) { }
 
   onStore() {
-    this.recipeServices.storeData().subscripe(
+    this.recipeService.storeData().subscribe(
       data => console.log(data),
       error => console.error(error)
     );

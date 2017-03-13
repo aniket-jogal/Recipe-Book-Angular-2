@@ -1,11 +1,16 @@
-// import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
+import { Headers, Http, Response } from '@angular/http';
+import 'rxjs/Rx';
+
 import { Recipe } from './recipe';
-import { Http } from '@angular/http';
-// @Injectable()
+import { Ingredient } from '../shared/ingredient';
+
+import { environment } from '../../environments/environment';
+
+@Injectable()
 export class RecipeService {
-
-
-  constructor() { }
+  recipesChanged = new EventEmitter<Recipe[]>();
+  constructor(private http: Http) { }
   // tslint:disable-next-line:member-ordering
   recipes: Recipe[] = [
     // tslint:disable-next-line:max-line-length
@@ -13,6 +18,36 @@ export class RecipeService {
   ];
   getRecipes() {
     return this.recipes;
+  }
+  getRecipe(id: number) {
+    return this.recipes[id];
+  }
+  deleteRecipe(recipe: Recipe) {
+    this.recipes.slice(this.recipes.indexOf(recipe), 1);
+  }
+  addRecipe(recipe: Recipe) {
+    this.recipes.push(recipe);
+  }
+  editData(oldRecipe: Recipe, newRecipe: Recipe) {
+    this.recipes[this.recipes.indexOf(oldRecipe)] = newRecipe;
+  }
+  storeData() {
+    const body = JSON.stringify(this.recipes);
+    const headers = new Headers({
+      'content-type': 'application/json'
+    });
+    return this.http.put(environment.recipe_services, body, { headers: headers });
+
+  }
+  fetchData() {
+    return this.http.get(environment.recipe_services)
+      .map((response: Response) => response.json())
+      .subscribe(
+      (data: Recipe[]) => {
+        this.recipes = data;
+        this.recipesChanged.emit(this.recipes)
+      }
+      )
   }
 
 }

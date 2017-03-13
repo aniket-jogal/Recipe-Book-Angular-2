@@ -4,5 +4,6 @@
 // The list of which env maps to which file can be found in `angular-cli.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  recipe_services: 'https://recipe-book-382b4.firebaseio.com/recipes.json'
 };
